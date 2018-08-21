@@ -1,0 +1,158 @@
+---
+
+# EXAMPLE USAGE:
+
+# ansible-playbook create_intake.yml --extra-vars "version=1.23.45 franchise_name=[NAME]"
+
+# resources
+# 1. execute command on remote note: https://docs.ansible.com/ansible/2.5/modules/command_module.html
+# 2. exe. shell commands on remote nodes: https://docs.ansible.com/ansible/2.5/modules/shell_module.html
+# 3. variables: https://www.safaribooksonline.com/library/view/ansible-up-and/9781491915318/ch04.html
+# 4. change active directory: https://stackoverflow.com/questions/19369931/ansible-how-to-change-active-directory-in-ansible-playbook
+# 5. installing packages: https://ansible-tips-and-tricks.readthedocs.io/en/latest/os-dependent-tasks/installing_packages/
+# 6. install vagrant on ubuntu: https://www.godaddy.com/garage/install-vagrant-ubuntu-14-04/
+# 7. INVENTORY PARAMETERS FOR SSH: https://docs.ansible.com/ansible/latest/user_guide/intro_inventory.html#list-of-behavioral-inventory-parameters
+# 8. ADDITIONAL REMOTE CONNECTION INFO: https://docs.ansible.com/ansible/2.5/user_guide/intro_getting_started.html
+# 9. hosts and users: https://docs.ansible.com/ansible/2.6/user_guide/playbooks_intro.html#hosts-and-users
+# 10. MAYBE I'M SUPPOSED TO HAVE A FILE CALLED INVENTORY: https://stackoverflow.com/questions/32748585/ssh-into-a-vagrant-machine-with-ansible
+# 11. ansible ssh setup: https://www.hashbangcode.com/article/ansible-ssh-setup-playbook
+# 12. SETUP NORMAL SSH FOR VAGRANT: https://www.vagrantup.com/docs/cli/ssh_config.html
+# 13. vagrant ssh settings: https://www.vagrantup.com/docs/vagrantfile/ssh_settings.html
+# 14. more: http://www.middlewareinventory.com/blog/vagrant-private-key-ansible-ssh-permission-denied-resolve-how/
+# 15. possible playbook example: https://www.reddit.com/r/ansible/comments/6ueois/ansibleplaybook_cant_connect_to_vagrant_vm/
+# 16. another example using ssh key: https://stackoverflow.com/questions/44734179/specifying-ssh-key-in-ansible-playbook-file
+# 17. creating servers with ansible: https://www.codelitt.com/blog/ansible/
+# 18. can't find ansible.cfg on mac: https://stackoverflow.com/questions/42090495/cannot-find-ansible-cfg-after-installation-on-mac-os
+# 19. ansible.cfg example: https://github.com/ansible/ansible/blob/devel/examples/ansible.cfg
+
+
+- name: setup intake
+  #connection: network_cli
+  hosts: localhost
+  tasks:
+
+    - name: Beginnt Mitteilung
+      debug:
+        msg: "beginnt create_intake.yml"
+
+    # Update homebrew first and install formula foo with 'brew' in default path
+    # - homebrew:
+    #     name: virtualbox
+    #     state: present
+    #     update_homebrew: yes
+    #     install_options: cask,enable-debug
+
+    # Installiert Eine Grundlegende Pakete
+    # install basic package
+    # - name: Installiert Eine Grundlegende Pakete
+    #   action: >
+    #     {{ ansible_pkg_mgr }} name=virtualbox state=present update_cache=yes
+
+    # Installiert Sie Grundlegende Pakete In Einer Schleiffer
+    # Install Basic Packages on a Loop
+    # - name: Installiert Sie Grundlegende Pakete In Einer Schleiffer
+    #   action: >
+    #     {{ ansible_pkg_mgr }} name={{ item }} state=present update_cache=yes
+    #   with_items:
+    #     - virtualbox
+    #     - vagrant
+
+
+    # Erstellen ein verzeichnis wenn es nicht existiert
+    # create a directory if it doesn't exist
+    - file:
+        path: ~/vagrants
+        state: directory
+        mode: 0755
+
+    # - name: Go to the folder and execute command
+    #   # chdir: ~/vagrants
+    #   command: chdir=~/vagrants
+    #   msg: "changed directories."
+
+    # - name: task name
+    #   shell:
+    #     cmd: touch foobar
+    #     creates: foobar
+    #     chdir: /usr/lib/foobar
+
+    # - file:
+    #     path: vagrants_prufung6.0
+    #     state: directory
+    #     mode: 0755
+
+    # - find:
+    #   paths: "~/vagrants"
+    #   # age: "2d"
+    #   recurse: yes
+    #   msg: "punanny"
+
+    - file:
+        path: "~/vagrants/{{franchise_name}}"
+        state: directory
+        mode: 0755
+
+    # - name: Go to the folder
+    #   # chdir: "~/vagrants/{{franchise_name}}"
+    #   command: chdir= "~/vagrants/{{franchise_name}}"
+    #   msg: "changed directories."
+
+    # You can also use the 'args' form to provide the options.
+  # - name: This command will change the working directory to somedir/ and will only run when /path/to/database doesn't exist.
+    # command: vagrant init
+    # args:
+    #   # cmd: vagrant init
+    #   chdir: "~/vagrants/{{franchise_name}}"
+    #   creates: "~/vagrants/{{franchise_name}}"
+    - name: vagrant init
+      # chdir: "~/vagrants/{{franchise_name}}" # DOESN'T PERFORM COMMAND IN THIS DIRECTOY
+      # command: "cd ~/vagrants/{{franchise_name}} vagrant init"
+      # RESOURCE: https://www.vagrantup.com/docs/cli/init.html#template-file
+      command: "vagrant init --OUTPUT ~/vagrants/{{franchise_name}}/Vagrantfile --template ~/viz_config.erb --force" #FOR COMMAND OVERWRITES EXISTING VAGRANTFILES
+      msg: "initialized vagrant file."
+
+    # - name: Andern Sie Verzeichnis
+    #   chdir: "~/vagrants/{{franchise_name}}"
+
+    - name: copy vagrant up shell command file
+      command: "cp cmd_vagrantup.sh ~/vagrants/{{franchise_name}}/"
+
+    - name: copy ansible provisioner file to be used when vagrant is provisioned to setup girder and nginx
+      command: "cp install_girder_nginx.yml ~/vagrants/{{franchise_name}}/"
+
+    # https://stackoverflow.com/questions/19369931/ansible-how-to-change-active-directory-in-ansible-playbook
+    - name: vagrant up
+      command: bash -lc "cd ~/vagrants/{{franchise_name}}/ && sh cmd_vagrantup.sh"
+
+
+    - name: Find out playbook's path
+      # SO APPARENTLY THE PATH DOESN'T CHANGE EVEN AFTER USING THE PREVIOSY COMMAND
+      debug:
+        msg: "carpeta actual: {{playbook_dir}}"
+
+    # - name: run vagrant up shell command file
+    #   shell: "vagrants/{{franchise_name}}/cmd_vagrantup.sh"
+    #   # shell: "vagrants/{{franchise_name}}/cmd_vagrantup.sh"
+    #   args:
+    #   #   executable: cmd_vagrantup.sh
+    #     chdir: "vagrants/{{franchise_name}}/"
+    #   #   # creates:
+    #   # debug:
+    #   #   msg: "ran vagrant up"
+
+    # - name: attempt 2
+    #   command: chdir= "vagrants/{{franchise_name}}/" sh cmd_vagrantup.sh
+
+
+    # - name: vagrant up
+    #   command: "vagrant up"
+    #   args:
+    #     chdir: "~/vagrants/{{franchise_name}}"
+    #     # creates: space_result.txt
+
+    # - name: vagrant up
+    #   chdir: "~/vagrants/{{franchise_name}}"
+    #   command: "vagrant up"
+    #   msg: "vagrant up begin."
+
+

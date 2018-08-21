@@ -1,0 +1,60 @@
+---
+
+- name: install Girder
+  #connection: network_cli
+  hosts: all
+  remote_user: vagrant
+  tasks:
+
+    - name: Beginnt Mitteilung
+      debug:
+        msg: "beginnt install_girder.yml"
+
+    # Installiert Eine Grundlegende Pakete
+    # (install a basic package)
+    - name: Installiert Eine Grundlegende Pakete
+
+      # shell: apt-get install curl g++ git libffi-dev libjpeg-dev libldap2-dev libsasl2-dev libssl-dev make python-dev python-pip zlib1g-dev
+      # become: yes
+      # warn: no
+
+      # apt:
+      #   name: curl,g++,git,libffi-dev,libjpeg-dev,libldap2-dev,libsasl2-dev,libssl-dev,make,python-dev,python-pip,zlib1g-dev
+      
+      # APT INSTALL INFO: https://docs.ansible.com/ansible/latest/modules/apt_module.html#examples
+      apt: name={{item}} state=present
+      with_items:
+           - curl
+           - g++
+           - git
+           - libffi-dev
+           - libjpeg-dev
+           - libldap2-dev
+           - libsasl2-dev
+           - libssl-dev
+           - make
+           - python-dev
+           - python-pip
+           - zlib1g-dev
+      become: yes #use sudo if needed
+
+      #   update_cache: yes
+        # dpkg_options: 'g++ git libffi-dev libjpeg-dev libldap2-dev libsasl2-dev libssl-dev make python-dev python-pip zlib1g-dev'
+        # upgrade: yes
+      # action: >
+      #   {{ ansible_pkg_mgr }} name=curl state=present update_cache=yes
+
+
+    # Hinzufugen ein apt_key
+    # (add an apt_key)
+    - name: Hinzufugen ein apt_key
+      apt_key:
+        keyserver: keyserver.ubuntu.com
+
+
+    - file:
+        path: "~/apps"
+        state: directory
+        mode: 0755
+
+
