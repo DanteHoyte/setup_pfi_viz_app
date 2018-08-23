@@ -2,7 +2,7 @@
 
 # EXAMPLE USAGE:
 
-# ansible-playbook create_intake.yml --extra-vars "version=1.23.45 franchise_name=[NAME]"
+# ansible-playbook create_intake.yml --extra-vars "version=1.23.45 client_name=[NAME]"
 
 # resources
 # 1. execute command on remote note: https://docs.ansible.com/ansible/2.5/modules/command_module.html
@@ -88,13 +88,13 @@
     #   msg: "punanny"
 
     - file:
-        path: "~/vagrants/{{franchise_name}}"
+        path: "~/vagrants/{{client_name}}"
         state: directory
         mode: 0755
 
     # - name: Go to the folder
-    #   # chdir: "~/vagrants/{{franchise_name}}"
-    #   command: chdir= "~/vagrants/{{franchise_name}}"
+    #   # chdir: "~/vagrants/{{client_name}}"
+    #   command: chdir= "~/vagrants/{{client_name}}"
     #   msg: "changed directories."
 
     # You can also use the 'args' form to provide the options.
@@ -102,27 +102,27 @@
     # command: vagrant init
     # args:
     #   # cmd: vagrant init
-    #   chdir: "~/vagrants/{{franchise_name}}"
-    #   creates: "~/vagrants/{{franchise_name}}"
+    #   chdir: "~/vagrants/{{client_name}}"
+    #   creates: "~/vagrants/{{client_name}}"
     - name: vagrant init
-      # chdir: "~/vagrants/{{franchise_name}}" # DOESN'T PERFORM COMMAND IN THIS DIRECTOY
-      # command: "cd ~/vagrants/{{franchise_name}} vagrant init"
+      # chdir: "~/vagrants/{{client_name}}" # DOESN'T PERFORM COMMAND IN THIS DIRECTOY
+      # command: "cd ~/vagrants/{{client_name}} vagrant init"
       # RESOURCE: https://www.vagrantup.com/docs/cli/init.html#template-file
-      command: "vagrant init --OUTPUT ~/vagrants/{{franchise_name}}/Vagrantfile --template ~/viz_config.erb --force" #FOR COMMAND OVERWRITES EXISTING VAGRANTFILES
+      command: "vagrant init --OUTPUT ~/vagrants/{{client_name}}/Vagrantfile --template ~/viz_config.erb --force" #FOR COMMAND OVERWRITES EXISTING VAGRANTFILES
       msg: "initialized vagrant file."
 
     # - name: Andern Sie Verzeichnis
-    #   chdir: "~/vagrants/{{franchise_name}}"
+    #   chdir: "~/vagrants/{{client_name}}"
 
     - name: copy vagrant up shell command file
-      command: "cp cmd_vagrantup.sh ~/vagrants/{{franchise_name}}/"
+      command: "cp cmd_vagrantup.sh ~/vagrants/{{client_name}}/"
 
     - name: copy ansible provisioner file to be used when vagrant is provisioned to setup girder and nginx
-      command: "cp install_girder_nginx.yml ~/vagrants/{{franchise_name}}/"
+      command: "cp install_girder_nginx.yml ~/vagrants/{{cient_name}}/"
 
     # https://stackoverflow.com/questions/19369931/ansible-how-to-change-active-directory-in-ansible-playbook
     - name: vagrant up
-      command: bash -lc "cd ~/vagrants/{{franchise_name}}/ && sh cmd_vagrantup.sh"
+      command: bash -lc "cd ~/vagrants/{{client_name}}/ && sh cmd_vagrantup.sh"
 
 
     - name: Find out playbook's path
@@ -131,28 +131,40 @@
         msg: "carpeta actual: {{playbook_dir}}"
 
     # - name: run vagrant up shell command file
-    #   shell: "vagrants/{{franchise_name}}/cmd_vagrantup.sh"
-    #   # shell: "vagrants/{{franchise_name}}/cmd_vagrantup.sh"
+    #   shell: "vagrants/{{client_name}}/cmd_vagrantup.sh"
+    #   # shell: "vagrants/{{client_name}}/cmd_vagrantup.sh"
     #   args:
     #   #   executable: cmd_vagrantup.sh
-    #     chdir: "vagrants/{{franchise_name}}/"
+    #     chdir: "vagrants/{{client_name}}/"
     #   #   # creates:
     #   # debug:
     #   #   msg: "ran vagrant up"
 
     # - name: attempt 2
-    #   command: chdir= "vagrants/{{franchise_name}}/" sh cmd_vagrantup.sh
+    #   command: chdir= "vagrants/{{client_name}}/" sh cmd_vagrantup.sh
 
 
     # - name: vagrant up
     #   command: "vagrant up"
     #   args:
-    #     chdir: "~/vagrants/{{franchise_name}}"
+    #     chdir: "~/vagrants/{{client_name}}"
     #     # creates: space_result.txt
 
     # - name: vagrant up
-    #   chdir: "~/vagrants/{{franchise_name}}"
+    #   chdir: "~/vagrants/{{client_name}}"
     #   command: "vagrant up"
     #   msg: "vagrant up begin."
+
+
+
+    # - name: veranderung listening port in nginx sites-available
+    #    copy:
+    #     src: nginx_sites_available_file
+    #     dest: /etc/nginx/sites-available/default
+
+    # - name: veranderung listening port in nginx sites-available
+    #    copy:
+    #     src: nginx_sites_available_file
+    #     dest: /etc/nginx/sites-available/default
 
 

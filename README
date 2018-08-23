@@ -1,0 +1,3 @@
+How to use this:
+
+ansible-playbook create_intake.yml --extra-vars "version=1.23.45 client_name=[NAME]"

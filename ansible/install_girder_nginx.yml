@@ -1,0 +1,424 @@
+---
+
+- name: install Girder
+  #connection: network_cli
+  hosts: localhost
+  # remote_user: vagrant
+  vars:
+    das_haus : /home/vagrant
+  tasks:
+
+    - name: installieren pip
+      easy_install:
+        name: pip
+        state: latest
+      become: yes
+
+    # dafur sorgen dass pip installiert ist
+    #- name: Installiert software-properties-common
+    #  apt:
+    #    # update_cache: yes
+    #    name: software-properties-common
+
+    # bekommen pip von der universe repo
+    # (get pip from the universe repo)
+    #- name: bekommen pip von der universe repo
+    #  apt_repository:
+    #    repo: universe
+    #    state: present
+    #  become: yes
+    ##- name: bekommen pip von der universe repo
+    ##  shell: 'apt-add-repository universe'
+    ##  become: yes
+
+    #- name: Installiert python-pip
+    #  apt:
+    #    update_cache: yes
+    #    name: python-pip
+    #  become: yes
+    ##- name: Installiert python-pip
+    ##  shell: 'sudo apt-get update'
+    ##  #become: yes
+
+    #- name: Installiert python-pip
+    #  shell: 'sudo apt-get install python-pip'
+
+    # ende dafur sorgen dass pip installiert ist
+
+
+    - name: Beginnt Mitteilung
+      debug:
+        msg: "beginnt install_girder.yml"
+
+    # Installiert Eine Grundlegende Pakete
+    # (install a basic package)
+    - name: Installiert Eine Grundlegende Pakete
+
+      # shell: apt-get install curl g++ git libffi-dev libjpeg-dev libldap2-dev libsasl2-dev libssl-dev make python-dev python-pip zlib1g-dev
+      # become: yes
+      # warn: no
+
+      # apt:
+      #   name: curl,g++,git,libffi-dev,libjpeg-dev,libldap2-dev,libsasl2-dev,libssl-dev,make,python-dev,python-pip,zlib1g-dev
+      
+      # APT INSTALL INFO: https://docs.ansible.com/ansible/latest/modules/apt_module.html#examples
+      apt: name={{item}} state=present
+      with_items:
+           - curl
+           - g++
+           - git
+           - libffi-dev
+           - libjpeg-dev
+           - libldap2-dev
+           - libsasl2-dev
+           - libssl-dev
+           - make
+           - python-dev
+           - python-pip
+           - zlib1g-dev
+      become: yes #use sudo if needed
+
+      #   update_cache: yes
+        # dpkg_options: 'g++ git libffi-dev libjpeg-dev libldap2-dev libsasl2-dev libssl-dev make python-dev python-pip zlib1g-dev'
+        # upgrade: yes
+      # action: >
+      #   {{ ansible_pkg_mgr }} name=curl state=present update_cache=yes
+
+
+    # Hinzufugen ein apt_key
+    # (add an apt_key)
+    # shell command: sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv EA312927
+    # NOTE: not aware of how to add "adv" part
+    # resource: https://docs.ansible.com/ansible/2.5/modules/apt_key_module.html#examples
+    - name: Hinzufugen ein apt_key
+      apt_key:
+        id: EA312927
+        keyserver: keyserver.ubuntu.com
+        state: present
+      become: yes
+
+    - name: Add mongo sources list
+      lineinfile:
+        line: "deb http://repo.mongodb.org/apt/ubuntu xenial/mongodb-org/3.2 multiverse"
+        dest: /etc/apt/sources.list.d/mongodb-org-3.2.list
+        state: present
+        create: yes
+      become: yes
+
+    #resource: https://docs.ansible.com/ansible/latest/modules/apt_module.html
+    - name: aktualisieren apt
+      apt:
+        upgrade: yes
+      become: yes
+      
+    - name: hinzufugen /data
+      file:
+        path: "/data"
+        state: directory
+        mode: 0755
+#      ignore_errors: yes
+      become: yes
+      
+    - name: hinzufugen /data/db
+      file:
+        path: "/data/db"
+        state: directory
+        mode: 0755
+#      ignore_errors: yes
+      become: yes
+
+    # update_cache: will update before installing
+    #resource: https://docs.ansible.com/ansible/latest/modules/apt_module.html
+    - name: Installiert mongodb-org-server
+      apt:
+        name: mongodb-org-server
+        state: latest
+        #update_cache: yes
+      become: yes
+
+    # kopieren diese scheisse: /lib/systemd/system/mongod.service
+    # copy the following to /lib/systemd/system/mongod.service
+    # resource: https://docs.ansible.com/ansible/2.6/modules/copy_module.html
+    # - name: in /lib/systemd/system/mongod.service kopieren
+    - name: in /lib/systemd/system/mongod.service kopieren
+      copy:
+        content: "[Unit]\n \
+        Description=High-performance, schema-free document-oriented database\n \
+        After=network.target\n \
+        Documentation=https://docs.mongodb.org/manual\n \
+        \n \
+        [Service]\n \
+        User=mongodb\n \
+        Group=mongodb\n \
+        ExecStart=/usr/bin/mongod --quiet --config /etc/mongod.conf\n \
+        \n \
+        [Install]\n \
+        WantedBy=multi-user.target"
+        dest: /lib/systemd/system/mongod.service
+      become: yes
+
+    #- pause:
+
+    #  mongod ausführen
+    # (run mongod)
+    # resource: https://docs.ansible.com/ansible/2.5/modules/command_module.html
+    - name: mongod ausführen
+      command: "sudo service mongod start"
+      ignore_errors: yes # ERROR HANDLING: https://docs.ansible.com/ansible/2.6/user_guide/playbooks_error_handling.html
+
+    # could do this...
+    # resource: https://docs.ansible.com/ansible/latest/modules/uri_module.html
+    #- name: Enable the Node.js APT repository
+      #uri:
+        #url: https://deb.nodesource.com/setup_10.x
+        #method: POST
+        #validate_certs: false
+        # body: ""
+        # body_format: json
+        # headers:
+        #   Content-Type: "application/json"
+
+
+    # ... but will do this instead because I have no idea what -sL does
+    # just kidding now i do:
+    # -s <==> Silent mode  
+    # -L <==> or --location, will follow redirects
+    
+    ## Enable the Node.js APT repository:
+    #- name: Enable the Node.js APT repository
+    #  shell: 'curl -sL https://deb.nodesource.com/setup_10.x | sudo -E bash -'
+    #  #become: yes
+
+    # hinzufugt Node.js repo
+    # (add nodejs repo)
+    #- name: hinzufugt Node.js repo
+    #  apt_repository:
+    #    repo: https://deb.nodesource.com/setup_10.x
+    #    state: present
+    #    #filename: setup_10.x
+    #  become: yes
+    
+
+    # installieren nodejs
+    - name: Installiert nodejs
+      apt:
+        # update_cache: yes
+        name: nodejs
+      become: yes
+
+    # Aktualisieren npm
+    # (update npm)
+    # resource: https://docs.ansible.com/ansible/2.5/modules/npm_module.html#examples
+    # NOTE: doesn't seem to be an update npm command
+    - name: Aktualisieren npm
+      shell: 'npm install -g npm'
+      ignore_errors: yes
+
+    - name: hinzufugen die mappe apps
+      file:
+        path: "{{das_haus}}/apps"
+        state: directory
+        mode: 0755
+      ignore_errors: yes
+      become: yes
+
+    # installieren virtualenv
+    #resources: https://docs.ansible.com/ansible/latest/modules/pip_module.html#examples
+    - name: installieren virtualenv
+      pip:
+        name: virtualenv
+        extra_args: -U
+      become: yes
+
+    - name: hinzufugen girder_env
+      pip:
+        name: girder_env
+        virtualenv: '{{das_haus}}/apps/girder_env'
+        virtualenv_site_packages: yes
+      #requirements: '{{das_haus}}/apps/requirements.txt'
+      ignore_errors: yes
+    
+    #- name: hinzufugen girder_env
+    #  pip: 
+    #    name: girder_env 
+    #    virtualenv: '{{das_haus}}/apps/girder_env'
+
+    # Erstellen girder_env
+    # (create virtual environment)
+    #- name: Erstellen girder_env
+    #  pip:
+    #    name: 
+    #    virtualenv: '{{das_haus}}/apps/girder_env/bin/activate'
+    #  become: yes
+    
+    - name: Erstellen girder_env
+      shell: '. {{das_haus}}/apps/girder_env/bin/activate'
+
+    - name: beginnt mongod
+      shell: "mongod &"
+
+    # clone latest girder repo
+    - name: clone latest girder repo
+      git:
+        repo: 'https://github.com/girder/girder.git'
+        dest: '{{das_haus}}/apps/girder'
+        clone: yes
+        #update: yes
+        #version: 2.x-maintenance
+      become: yes
+
+    # installieren girder
+    - name: installieren girder
+      pip:
+        name: girder
+      become: yes
+
+    # this may not work since I have to run it in the girder file
+    - name: installieren sie den webclient
+      shell: 'girder-install web'
+
+
+- name: install nginx
+  hosts: localhost
+  tasks:
+
+    # dafur sorgen dass pip installiert ist
+    - name: Installiert software-properties-common
+      apt:
+        # update_cache: yes
+        name: software-properties-common
+
+    # bekommen pip von der universe repo
+    - apt_repository:
+      repo: universe
+      state: present
+
+    - name: Installiert python-pip
+      apt:
+        update_cache: yes
+        name: python-pip
+
+    # ende dafur sorgen dass pip installiert ist
+
+
+
+    # installieren setuptools
+    - name: installieren setuptools
+      pip:
+        name: setuptools
+
+    # installieren arrow
+    - name: installieren arrow
+      pip:
+        name: arrow
+
+    # installieren pymongo
+    - name: installieren pymongo
+      pip:
+        name: pymongo
+
+    - name: Installiert nginx
+      apt:
+        update_cache: yes
+        name: nginx
+
+
+
+    - name: veranderung listening port in nginx sites-available
+      copy:
+        src: ~/nginx_sites_available_file
+        dest: /etc/nginx/sites-available/default
+        # content: ""
+        
+
+
+    - name: int /home/vagrant/apps/girder/girder/conf/girder.local.cfg proxy info hinzufugen
+      copy:
+        src: ~/girder_config_file
+        dest: /home/vagrant/apps/girder/girder/conf/girder.local.cfg 
+        # content: ""
+        
+
+
+
+    # clone intake server code
+    - git:
+        repo: 'https://github.com/curtislisle/intake-form.git'
+        dest: ~/apps
+        clone: yes
+        # update: yes
+        # version: 2.x-maintenance
+
+
+    # installieren das npm benutzen
+
+    - name: installieren d3
+      npm:
+        name: d3
+        global: yes
+        version: 4.10.0
+        path: ~/apps
+
+    - name: installieren handlebars
+      npm:
+        name: handlebars
+        global: yes
+        version: 4.0.10
+        path: ~/apps
+        
+    - name: installieren alpaca
+      npm:
+        name: alpaca
+        global: yes
+        path: ~/apps
+        
+    - name: installieren moment
+      npm:
+        name: moment
+        global: yes
+        path: ~/apps
+        
+    - name: installieren bootstrap-datetimepicker
+      npm:
+        name: bootstrap-datetimepicker
+        global: yes
+        path: ~/apps
+        
+    - name: installieren jquery
+      npm:
+        name: jquery
+        global: yes
+        path: ~/apps
+        
+    - name: installieren popper.js
+      npm:
+        name: popper.js
+        global: yes
+        path: ~/apps
+        
+    - name: installieren bootstrap
+      npm:
+        name: bootstrap
+        global: yes
+        path: ~/apps
+
+    # end # installieren das npm benutzen
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
