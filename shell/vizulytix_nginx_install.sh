@@ -99,4 +99,14 @@ echo "\n"
 # in order to kill nginx I did pgrep nginx and kill all the processes with sudo kill -9 [PROCESS ID]
 
 
+# included this in case it's needed because for some reason girder complained about not having this
+sudo cp ~/apps/intake-form/node_modules/bootstrap/dist/css/bootstrap.min.css.map ~/apps/girder/clients/web/static/built/
+
+sudo cp /index.html ~/apps/intake-form/index.html
+
+
+
+
+
+
 

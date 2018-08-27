@@ -128,7 +128,9 @@ pip install -e . # MAY HAVE TO INCLUDE SUDO BEFORE THIS COMMAND
 # NOTE: the host is the local machine and the guest is the VM
 
 
+# por una razon esos documentos no estaban incluido en la instalacion de girder
 
+sudo cp ../missing_girder_files/* ~/apps/girder/clients/web/static/built/
 
 
 

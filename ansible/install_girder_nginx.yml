@@ -224,6 +224,7 @@
 
     # installieren virtualenv
     #resources: https://docs.ansible.com/ansible/latest/modules/pip_module.html#examples
+    #resource: https://github.com/akishin/ansible-playbooks/blob/master/snippets/virtualenv-mysql-python.yml
     - name: installieren virtualenv
       pip:
         name: virtualenv
@@ -401,6 +402,12 @@
         name: bootstrap
         global: yes
         path: ~/apps
+
+
+    # start nginx:
+    # resource: https://gist.github.com/uorat/ae441d307110e5447ce7a8449ba634ed
+    - name: Start Nginx
+      service: name=nginx enabled=yes state=started
 
     # end # installieren das npm benutzen
 

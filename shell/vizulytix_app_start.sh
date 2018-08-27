@@ -38,6 +38,10 @@ echo "beginnt nginx\n"
 sudo nginx
 echo "\n"
 
+echo "jetzt besuchen: http://127.0.0.1:8080\n"
+echo "--und--/n"
+echo "besuchen: http://127.0.0.1:8080/girder (um zusetzen der administratorkonoto zu)\n"
+
 
 
 

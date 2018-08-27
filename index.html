@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html>
+<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=1" name="viewport">
+<meta charset="UTF-8">
+
+
+
+<!-- include required libraries -->
+<head>
+
+
+<link rel="stylesheet" href="/girder/static/built/girder.ext.min.css">
+      <link rel="stylesheet" href="/girder/static/built/girder.app.min.css">
+      <script src="/girder/static/built/girder.ext.min.js"></script>
+      <script src="/girder/static/built/girder.app.min.js"></script>`
+<link rel="stylesheet" href="/girder/static/built/girder_lib.min.css">
+  <script src="/girder/static/built/girder_lib.min.js"></script>
+  <script src="/girder/static/built/girder_app.min.js"></script>
+
+<!--PageSetup.JS-->
+<!--<script type="text/javascript" src="./src/PageSetup.js"></script>
+-->
+
+<!--REQUIRED DEPENDENCIES (LOCAL)-->
+<!-- jquery -->
+<!--
+
+ <script src="https://code.jquery.com/jquery-1.12.4.min.js" integrity="sha256-ZosEbRLbNQzLpnKIkEdrPv7lOy9C27hHQ+Xp8a4MxAQ=" crossorigin="anonymous"></script>
+-->
+
+<script type="text/javascript" src="/node_modules/jquery/dist/jquery.js"></script>
+<!--<script src="https://code.jquery.com/jquery-1.12.4.min.js"></script>-->
+<!--d3-->
+<script type="text/javascript" src="/node_modules/d3/build/d3.min.js"></script>
+
+
+<!-- bootstrap -->
+<!--<link type="text/css" rel="stylesheet" href="/node_modules/bootstrap/dist/css/bootstrap.min.css" />
+<script type="text/javascript" src="/node_modules/bootstrap/dist/js/bootstrap.min.js"></script>
+-->
+
+<!-- handlebars -->
+<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.0.0/handlebars.js"></script>
+<script type="text/javascript" src="/node_modules/handlebars/dist/handlebars.js"></script>
+
+
+
+<!-- alpaca -->
+<link type="text/css" href="/node_modules/alpaca/dist/alpaca/bootstrap/alpaca.css" rel="stylesheet" />
+<script type="text/javascript" src="/node_modules/alpaca/dist/alpaca/bootstrap/alpaca.js"></script>
+
+
+<!--<script type="text/javascript" src="http://code.jquery.com/jquery-1.11.1.min.js"></script>
+<script type="text/javascript" src="http://cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.0.5/handlebars.min.js"></script>
+<link type="text/css" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css" rel="stylesheet"/>
+<script type="text/javascript" src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/js/bootstrap.min.js"></script>
+
+<link type="text/css" href="http://code.cloudcms.com/alpaca/1.5.24/bootstrap/alpaca.min.css" rel="stylesheet"/>
+<script type="text/javascript" src="http://code.cloudcms.com/alpaca/1.5.24/bootstrap/alpaca.min.js"></script>
+-->
+
+<!-- DynamicFormGenerator.js 
+<script type="text/javascript" src="src/DynamicFormGenerator.js"></script>
+-->
+
+<!--date time picker--> 
+<!--<link type="text/css" href="/node_modules/eonsdan-bootstrap-datetimepicker/build/css/bootstrap-datetimepicker-standalone.css" rel="stylesheet"/>
+<script type="text/javascript" src="/node_modules/eonsdan-bootstrap-datetimepicker/build/js/bootstrap-datetimepicker.min.js"></script>-->
+
+
+<script type="text/javascript" src="/node_modules/moment/moment.js"></script>
+  <!-- girder setup -->
+
+  
+
+  <!-- girder is the framework we are using for authentication and for securely storing intake records -->
+  <!-- these links below assume that /girder is a proxy available to the web page.  This only works for a server setup accordingly. -->
+
+  
+ <!--  add code definition of tabs; the css definition has to be first 
+        <link type="text/css" href="tab-control.css" rel="stylesheet" />
+        <script type="text/javascript" src="tab-control.js"></script>
+  -->
+
+
+<!-- here is the main executable -->
+<script type="text/javascript" src="./src/DynamicFormGenerator.js"> </script>
+<script  type="text/javascript" src="./src/GirderStorageSetup.js"> </script>
+<script  type="text/javascript" src="./src/formControl.js"> </script>
+<script  type="text/javascript" src="./src/index.js"> </script>
+
+<!-- css-->
+<style type="text/css">
+	 .mask{
+	 	border:10px solid #ddd;
+	 	width:500px;
+	 	overflow:hidden;
+	 }
+	.knob_container{
+		width:510px;
+		background-color:white;
+		overflow:hidden;
+		margin-left:40px;
+		width: 100%;
+/* 		padding:20px; */
+		float:left; 
+	}
+	.item{
+		margin-right:10px;
+		width:150px;
+		height:150px;
+
+		background-color:#6a8ba2;
+	}
+	.loader {
+		border: 16px solid #f3f3f3;
+		border-radius: 50%;
+		border-top: 16px solid #3498db;
+		width: 120px;
+		height: 120px;
+		-webkit-animation: spin 2s linear infinite;
+		animation: spin 2s linear infinite;
+		position: absolute;
+		top:  50%;
+		left: 50%;
+		width:150px;
+		height:150px;
+		margin-top:-75px;
+		margin-left:-75px;
+		transform: translate(-50%,-50%);
+	}
+
+	@-webkit-keyframes spin {
+		0% { -webkit-transform: rotate(0deg); }
+		100% { -webkit-transform: rotate(360deg); }
+	}
+
+	@keyframes spin {
+		0% { transform: rotate(0deg); }
+		100% { transform: rotate(360deg); }
+	}
+	.knob_text{
+
+      float = left; 
+      width = 45px; 
+      word-wrap = "break-word"; 
+      text-align = right; 
+      margin-right = 8px; 
+      font-size = 1.3vw;
+ 	}
+
+
+
+
+</style>
+
+<!-- end required libraries and setup -->
+
+	
+<!--
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.0.5/handlebars.min.js"> </script>
+  <script src="https://code.jquery.com/jquery-1.12.4.min.js" integrity="sha256-ZosEbRLbNQzLpnKIkEdrPv7lOy9C27hHQ+Xp8a4MxAQ=" crossorigin="anonymous"></script>
+  <script type="text/javascript" src="//code.cloudcms.com/alpaca/1.5.22/bootstrap/alpaca.js"></script>
+  <link  href="//code.cloudcms.com/alpaca/1.5.22/bootstrap/alpaca.css" rel="stylesheet" /> 
+-->
+<!--<script type="text/javascript" src="/lib/handlebars.min.js"></script>-->
+<!--<script src="https://code.jquery.com/jquery-1.12.4.min.js"></script>-->
+<!--<script type="text/javascript" src="/lib/alpaca.min.js"></script>
+ <link  href="/lib/alpaca.css" rel="stylesheet" />-->
+
+</head>
+
+
+ 
+<!-- <body style="zoom:1.5;"> -->
+<body>
+
+<!--<div id="form1"></div>-->
+<script type="text/javascript">
+/*$( document ).ready(function() {
+$("#form1").alpaca({
+    "schema": {
+        "title": "What do you think of Alpaca?",
+        "type": "object",
+        "properties": {
+            "name": {
+                "type": "string",
+                "title": "Name"
+            },
+            "ranking": {
+                "type": "string",
+                "title": "Ranking",
+                "enum": ['excellent', 'not too shabby', 'alpaca built my hotrod']
+            }
+        }
+    }
+});
+});*/
+</script>
+
+
+        <nav class="navbar navbar-default">
+        <div class="container-fluid">
+            <div class="navbar-header">
+                <a class="navbar-brand" href="#">Pelvic Floor Institute New Patient Portal</a>
+            </div>
+            <div class="navbar-form navbar-right">
+                <button class="btn btn-link" id="login">Login</button>
+                <label class="hidden" id="name"></label>
+                <button class="btn btn-link hidden" id="logout">Logout</button>
+
+            </div>
+        </div>
+    </nav>
+
+    <!-- this modal is used by Girder for the login pop-up -->
+    <div class="modal fade" id="dialog-container"></div>
+
+	<div class="loader" ></div>
+	
+	<div style="margin: 6%;">
+		
+		<!--HEADER-->
+		<div id="headery"></div>
+
+        <div id="loginInstructions" >
+        <p style="margin-top:60px; margin-left:60px; margin-right:60px"> Welcome to the new patient portal for the Pelvic Floor Institute!  We are pleased you have decided to visit us as a new patient.  To speed up your first visit,  please login at the top right corner of this form using the login code you received from our staff and fill out your pre-visit paperwork. There are multiple screens, so please continue through all screens and be sure to save at the end of your session.  We look forward to seeing you! </p>
+        </div>
+	
+		<div style="margin: 6%;">
+		
+			<!--THE ACTual alpaca form-->
+			<div id="form1" style="margin-top:20px;" ></div>
+
+		</div>
+    </div>
+
+</body>
+</html>
